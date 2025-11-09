@@ -137,6 +137,29 @@ public:
             temp = temp->nextMovie;
         }
     }
+
+    void displayByGenre(string searchGenre) {
+        if (head == NULL) {
+            cout << "\nNo movies available!\n";
+            return;
+        }
+
+        Movie* temp = head;
+        bool found = false;
+
+        cout << "\n======= MOVIES IN GENRE: " << searchGenre << " =======\n";
+
+        while (temp != NULL) {
+            if (temp->movieGenre == searchGenre) {
+                found = true;
+                temp->showMovie();
+            }
+            temp = temp->nextMovie;
+        }
+
+        if (!found)
+            cout << "No movies found in this genre.\n";
+    }
 };
 
 class WatchLaterQueue {
@@ -152,20 +175,26 @@ public:
         loadFromFile();
     }
 
-    void addToQueue(int id, string title, string genre) {
+    void addToQueue(int id, string title, string genre, bool fromFile = false) {
         QueueNode* newNode = new QueueNode();
         newNode->movieId = id;
         newNode->movieTitle = title;
         newNode->movieGenre = genre;
+
         if (rearNode == NULL)
             frontNode = rearNode = newNode;
         else {
             rearNode->nextNode = newNode;
             rearNode = newNode;
         }
+
         queueSize++;
-        saveToFile();
-        cout << "\n'" << title << "' added to Watch Later!\n";
+
+        if (!fromFile)
+            saveToFile();
+
+        if (!fromFile)
+            cout << "\n'" << title << "' added to Watch Later!\n";
     }
 
     void removeFromQueue() {
@@ -220,7 +249,7 @@ public:
             pos = line.find('|'); id = stoi(line.substr(0, pos)); line.erase(0, pos + 1);
             pos = line.find('|'); title = line.substr(0, pos); line.erase(0, pos + 1);
             genre = line;
-            addToQueue(id, title, genre);
+            addToQueue(id, title, genre, true); 
         }
         fin.close();
     }
@@ -286,7 +315,6 @@ public:
     }
 };
 
-
 class MovieRecommendationSystem {
 public:
     MovieLinkedList movieDatabase;
@@ -301,13 +329,14 @@ public:
         cout << "\n\n======= MOVIE RECOMMENDATION SYSTEM =======\n";
         cout << "1. View All Movies\n";
         cout << "2. Search Movie by ID\n";
-        cout << "3. Add New Movie\n";
-        cout << "4. Add Movie to Watch Later\n";
-        cout << "5. View Watch Later Queue\n";
-        cout << "6. Remove from Watch Later\n";
-        cout << "7. Add Rating for Movie\n";
-        cout << "8. View User Ratings\n";
-        cout << "9. Exit\n";
+        cout << "3. View Movies by Genre\n";
+        cout << "4. Add New Movie\n";
+        cout << "5. Add Movie to Watch Later\n";
+        cout << "6. View Watch Later Queue\n";
+        cout << "7. Remove from Watch Later\n";
+        cout << "8. Add Rating for Movie\n";
+        cout << "9. View User Ratings\n";
+        cout << "10. Exit\n";
         cout << "Enter choice: ";
     }
 
@@ -318,13 +347,14 @@ public:
             cin >> choice;
             if (choice == 1) movieDatabase.displayAllMovies();
             else if (choice == 2) handleSearchById();
-            else if (choice == 3) handleAddMovie();
-            else if (choice == 4) handleAddToWatchLater();
-            else if (choice == 5) watchLater.displayQueue();
-            else if (choice == 6) watchLater.removeFromQueue();
-            else if (choice == 7) handleAddRating();
-            else if (choice == 8) handleViewUserRatings();
-            else if (choice == 9) { cout << "\nThank you!\n"; break; }
+            else if (choice == 3) handleViewByGenre();
+            else if (choice == 4) handleAddMovie();
+            else if (choice == 5) handleAddToWatchLater();
+            else if (choice == 6) watchLater.displayQueue();
+            else if (choice == 7) watchLater.removeFromQueue();
+            else if (choice == 8) handleAddRating();
+            else if (choice == 9) handleViewUserRatings();
+            else if (choice == 10) { cout << "\nThank you!\n"; break; }
             else cout << "\nInvalid choice!\n";
         }
     }
@@ -336,6 +366,14 @@ public:
         Movie* m = movieDatabase.searchMovieById(id);
         if (m) m->showMovie();
         else cout << "Movie not found!\n";
+    }
+
+    void handleViewByGenre() {
+        string genre;
+        cout << "Enter Genre: ";
+        cin.ignore();
+        getline(cin, genre);
+        movieDatabase.displayByGenre(genre);
     }
 
     void handleAddMovie() {
@@ -378,9 +416,9 @@ public:
     }
 };
 
-
 int main() {
     MovieRecommendationSystem sys;
     sys.startSystem();
     return 0;
 }
+
