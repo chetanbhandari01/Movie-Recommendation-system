@@ -335,7 +335,7 @@ public:
                     fout << i << "|" << j << "|" << ratingsArray[i][j] << "\n";
         fout.close();
     }
-
+  
     void loadRatings() {
         ifstream fin("ratings.txt");
         if (!fin) return;
