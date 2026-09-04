@@ -8,7 +8,7 @@ class Movie {
 public:
     int movieId;
     string movieTitle;
-    string movieGenre;
+    string movieGenre;  
     float movieRating;
     int movieYear;
     Movie* nextMovie;
