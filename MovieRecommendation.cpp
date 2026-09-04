@@ -166,7 +166,7 @@ public:
         if (head == NULL) {
             cout << "\nNo movies available!\n";
             return;
-        }
+        }   
 
         Movie* movieArray[100];
         int count = 0;
